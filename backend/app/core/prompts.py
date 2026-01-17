@@ -26,15 +26,15 @@ Behaviors and Rules:
       - 'type': 'comic_config'
       - 'language': 'English',
       - 'style': '{User Specified Style}' (Must fill in the user-specified style, if not specified, default to 'Chibi/Fantasy Style')
-      - 'bubble_style': { 'shape': 'Bubble Shape', 'color': 'Background Color', 'font_color': 'Font Color', 'stroke_width': 'Stroke Width' }
-      - 'narration_style': { 'shape': 'Box/Rounded', 'color': 'Background Color', 'font_color': 'Font Color', 'opacity': 'Opacity' }
-      - 'border_style': { 'width': 'Line Width', 'color': 'Color', 'type': 'Solid/Hand-drawn' }
-      - 'gutter_style': { 'type': 'Standard Cross Split', 'color': 'White', 'width': '10px' }
+      - 'bubble_style': { 'shape': 'Round/Cloud/Jagged', 'color': 'Hex Color Code or Standard Color Name', 'stroke_width': 'Pixel Value (e.g. 2px)', 'font': { 'color': 'Hex/Name', 'size': 'Pixel Value', 'family': 'Font Family Name' } } (Adjust based on story tone, e.g., Jagged for action/horror)
+      - 'narration_style': { 'shape': 'Rectangle/RoundedBox', 'color': 'Hex/Name', 'opacity': '0.0-1.0', 'font': { 'color': 'Hex/Name', 'size': 'Pixel Value', 'family': 'Font Name' } } (Adjust based on narrative voice)
+      - 'border_style': { 'color': 'Hex/Name', 'type': 'Solid/Rough/None', 'width': 'Pixel Value' } (Thicker/Rougher for intense stories)
+      - 'gutter_style': { 'color': 'Hex/Name', 'type': 'Standard', 'width': 'Pixel Value' } (Wider for slow pacing, narrower for fast action)
       - 'layout_settings': { 
-           'show_panel_numbers': false,  // [Switch] Whether to show panel numbers
-           'panel_number_style': { 'position': 'top-left', 'bg_color': '#000000', 'text_color': '#00FF41', 'font_size': '14px' }, 
+           'show_panel_numbers': false, 
+           'panel_number_style': { 'position': 'top-left', 'bg_color': 'Black', 'text_color': 'Neon Green', 'font_size': '14px' }, 
            'force_uniform_borders': true, 
-           'composition_mode': 'grid' // grid=Grid Splicing, cinematic=Cinematic Widescreen
+           'composition_mode': 'grid' 
         }
       - 'aspect_ratio': '16:9'
 
@@ -47,13 +47,13 @@ Behaviors and Rules:
       - 'type': 'character_sheet'
       - 'name': 'Character Name'
       - 'meta_info':{
-        - 'language': Language based on user input
-        - 'role': 'Protagonist' | 'Supporting' | 'Extra' (Must indicate character type)
-        - 'personality': 'Character personality traits, e.g., Cheerful, Cold, Hot-blooded, etc., which will affect expressions and poses'
-        - 'age': 'Age description, approximate range'
-        - 'relationships': 'Description of relationship with protagonist or other characters' (Must indicate interpersonal relationships)
+        - 'language': Language based on user input,
+        - 'role': 'Protagonist' | 'Supporting' | 'Extra' (Must indicate character type),
+        - 'personality': 'Character personality traits, e.g., Cheerful, Cold, Hot-blooded, etc., which will affect expressions and poses',
+        - 'age': 'Age description, approximate range',
+        - 'relationships': 'Description of relationship with protagonist or other characters' (Must indicate interpersonal relationships),
         - 'style': '{User Specified Style}',
-        - 'feature': 'Explicit character features, e.g., Youthful, Plump, etc.'
+        - 'feature': 'Explicit character features, e.g., Youthful, Plump, etc.',
         - 'aspect_ratio': '16:9'
       }
       - 'design_panels': [
@@ -76,7 +76,7 @@ Behaviors and Rules:
           'style': '{User Specified Style}',
           'language': 'English',
           'volume': 'Current Volume/Total Volumes',
-          'aspect_ratio': '16:9',
+          'aspect_ratio': '16:9'
         }
       - 'characters': ['List of characters appearing in this group of panels']
       - 'plot_breakdown': [

@@ -231,11 +231,9 @@ def generate_storyboard_task(task_id: str, project_id: str, user_input: str):
                     meta["aspect_ratio"] = global_aspect
                     
                     # Also inject specific style configs if present
-                    if "bubble_style" in config_block: meta["bubble_style"] = config_block["bubble_style"]
-                    if "narration_style" in config_block: meta["narration_style"] = config_block["narration_style"]
-                    if "border_style" in config_block: meta["border_style"] = config_block["border_style"]
-                    if "gutter_style" in config_block: meta["gutter_style"] = config_block["gutter_style"]
-                    if "layout_settings" in config_block: meta["layout_settings"] = config_block["layout_settings"]
+                    for key in ["bubble_style", "narration_style", "border_style", "gutter_style", "layout_settings"]:
+                        if key in config_block:
+                            meta[key] = config_block[key]
                     
                     block["meta_info"] = meta
             
@@ -365,7 +363,10 @@ def generate_all_images_task(task_id: str, project_id: str):
                             if os.path.exists(abs_path) and abs_path not in context_images:
                                 context_images.append(abs_path)
                 
-                # b) Previous History (Last 3 logic)
+                # b) Previous History (Last 3 logic) - RE-ENABLED for Batch Generation
+                # For batch generation, we build history as we go.
+                # This ensures panel N is consistent with panel N-1.
+                
                 if len(generated_history) >= 3:
                     selected = [generated_history[0]] + generated_history[-2:]
                 else:
@@ -736,6 +737,8 @@ def generate_panel_task(task_id: str, item_id: int):
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             
             # 1. Find Character Images
+            # STRICT POLICY: Only use the currently active character image (p_char.image_url).
+            # Do NOT search ImageHistory or other versions. This ensures consistency with the user's current selection.
             char_names = item.data.get("characters", [])
             if isinstance(char_names, str): char_names = [char_names]
             elif isinstance(char_names, list):
@@ -754,12 +757,21 @@ def generate_panel_task(task_id: str, item_id: int):
                             if os.path.exists(abs_path) and abs_path not in context_images:
                                 context_images.append(abs_path)
             
-            # 2. Previous Panels
+            # 2. Previous Panels - RE-ENABLED but with strict filtering
+            # We want to use PREVIOUSLY CONFIRMED panels as reference to maintain consistency,
+            # but NOT the current panel's old version (which we are regenerating).
+            # STRICT POLICY: Only use currently active panel images (i.image_url) from the database.
+            
+            # Filter logic:
+            # - Use panels with sequence number LESS than current item.sequence
+            # - Ensure they have an image_url (meaning they are generated/confirmed)
+            # - Limit to last 3 to keep context fresh but manageable
+            
             prev_items = sorted([i for i in project.storyboard_items if i.sequence < item.sequence and i.image_url], key=lambda x: x.sequence)
             if prev_items:
                 selected = []
                 if len(prev_items) >= 3:
-                    selected = [prev_items[0]] + prev_items[-2:]
+                    selected = [prev_items[0]] + prev_items[-2:] # First one + last two
                 else:
                     selected = prev_items
                     
