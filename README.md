@@ -78,13 +78,6 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Create `.env` file and fill in API Key:
-
-```ini
-# backend/.env
-GOOGLE_API_KEY="your_google_api_key_here"
-```
-
 Initialize the database using Alembic:
 
 ```bash
@@ -136,22 +129,27 @@ Access in browser: `http://localhost:5173`
 
 ## 📖 User Guide
 
-1.  **Create Project**: Click "New Project" on the homepage and enter the comic title and introduction.
-2.  **Story & Configuration**:
+1.  **Configure Models**:
+    *   Click "Models" in the top navigation bar.
+    *   Add a new configuration with your Google API Key.
+    *   Ensure the model type is set correctly (Text/Image) and activated.
+
+2.  **Create Project**: Click "New Project" on the homepage and enter the comic title and introduction.
+3.  **Story & Configuration**:
     *   Enter your story outline.
     *   Set global styles (e.g., "Japanese Shonen"), aspect ratio, etc.
     *   Click "Generate Storyboard Config", and AI will generate the character list and storyboard script.
     
     ![Story & Configuration](assets/story_config.png)
 
-3.  **Character Workshop**:
+4.  **Character Workshop**:
     *   View AI-generated character settings.
     *   Click "Draw" to generate character portraits.
     *   If there are duplicate characters, use the "Merge Characters" function to clean them up.
 
     ![Character Workshop](assets/character_studio.png)
 
-4.  **Storyboard Editing**:
+5.  **Storyboard Editing**:
     *   Check the description of each panel in the storyboard list.
     *   Click "Generate Image" or "Generate All" to start drawing the comic.
     *   Click on an image to view it in large size and support downloading.
