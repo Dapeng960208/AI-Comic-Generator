@@ -164,6 +164,11 @@ def generate_storyboard_task(task_id: str, project_id: str, user_input: str):
                  story_blocks = [b for b in json_blocks if b.get("type") not in ["character_sheet", "comic_config"]]
 
             # --- Missing Character Check & Fix ---
+            session.refresh(task)
+            if task.status == "cancelled":
+                log_task_event(session, task_id, "Task execution cancelled by user.")
+                return
+
             story_char_names = set()
             for block in story_blocks:
                 chars = block.get("characters", [])
@@ -303,6 +308,12 @@ def generate_all_images_task(task_id: str, project_id: str):
             total_chars = len(project.characters)
             log_task_event(session, task_id, f"Generating {total_chars} characters...")
             for i, char in enumerate(project.characters):
+                # Check for cancellation
+                session.refresh(task)
+                if task.status == "cancelled":
+                    log_task_event(session, task_id, "Task execution cancelled by user.")
+                    return
+
                 if char.image_url: 
                     log_task_event(session, task_id, f"Character {char.name} already has image, skipping.")
                     continue 
@@ -353,6 +364,12 @@ def generate_all_images_task(task_id: str, project_id: str):
             # For "one click", let's assume we scan all items.
             
             for i, item in enumerate(items):
+                # Check for cancellation
+                session.refresh(task)
+                if task.status == "cancelled":
+                    log_task_event(session, task_id, "Task execution cancelled by user.")
+                    return
+
                 # Update progress at start of loop
                 # task.progress = int((i / total_items) * 100)
                 # session.add(task)
@@ -479,6 +496,12 @@ def generate_all_characters_task(task_id: str, project_id: str):
             log_task_event(session, task_id, f"Generating {total_chars} characters...")
             
             for i, char in enumerate(project.characters):
+                # Check for cancellation
+                session.refresh(task)
+                if task.status == "cancelled":
+                    log_task_event(session, task_id, "Task execution cancelled by user.")
+                    return
+
                 # if char.image_url: 
                 #    logger.info(f"Character {char.name} already has image, skipping.")
                 #    continue 

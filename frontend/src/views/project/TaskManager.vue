@@ -15,6 +15,16 @@
             </span>
           </div>
           <div class="status-group">
+             <el-button 
+               v-if="['pending', 'processing'].includes(task.status)" 
+               link 
+               size="small" 
+               type="danger"
+               @click.stop="cancelTask(task.id)" 
+               title="Cancel Task"
+             >
+                <el-icon><CircleClose /></el-icon>
+             </el-button>
              <el-button link size="small" @click.stop="openTerminal(task.id)" title="View Logs">
                 <el-icon><Monitor /></el-icon>
              </el-button>
@@ -29,7 +39,9 @@
 
 <script setup>
 import { computed } from 'vue'
-import { ArrowUp, ArrowDown, Monitor } from '@element-plus/icons-vue'
+import { ArrowUp, ArrowDown, Monitor, CircleClose } from '@element-plus/icons-vue'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps({
   tasks: {
@@ -56,6 +68,16 @@ const openTerminal = (taskId) => {
     emit('open-terminal', taskId)
 }
 
+const cancelTask = async (taskId) => {
+    try {
+        await axios.post(`/api/v1/tasks/${taskId}/cancel`)
+        ElMessage.warning('Task cancellation requested')
+    } catch (e) {
+        console.error(e)
+        ElMessage.error('Failed to cancel task')
+    }
+}
+
 const getTaskTypeName = (type) => {
   const map = {
     'storyboard': 'Storyboard Generation',
@@ -70,7 +92,8 @@ const getTaskStatusText = (status) => {
     'pending': 'Pending',
     'processing': 'Processing',
     'completed': 'Completed',
-    'failed': 'Failed'
+    'failed': 'Failed',
+    'cancelled': 'Cancelled'
   }
   return map[status] || status
 }
@@ -78,6 +101,7 @@ const getTaskStatusText = (status) => {
 const getTaskProgressStatus = (status) => {
   if (status === 'completed') return 'success'
   if (status === 'failed') return 'exception'
+  if (status === 'cancelled') return 'warning'
   return ''
 }
 </script>
@@ -173,4 +197,5 @@ const getTaskProgressStatus = (status) => {
 .task-status.processing { color: #409EFF; }
 .task-status.completed { color: #67C23A; }
 .task-status.failed { color: #F56C6C; }
+.task-status.cancelled { color: #E6A23C; }
 </style>
