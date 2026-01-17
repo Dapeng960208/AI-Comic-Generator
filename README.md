@@ -8,6 +8,14 @@ An open-source AI-powered manga creation tool that transforms text stories into 
 ![Python](https://img.shields.io/badge/Backend-FastAPI-blue)
 ![Vue](https://img.shields.io/badge/Frontend-Vue3-green)
 
+## ✨ Core Philosophy
+
+*   **JSON-Driven Workflow**: The core of this project is to manage the entire comic creation process through structured JSON data. From story outlines to character settings, and finally to storyboard details, everything is stored and processed as JSON. This ensures data consistency, version control, and easy integration with AI models.
+*   **Global Configuration (Global Config JSON)**: A centralized configuration system that controls the artistic direction of the entire project.
+    *   **Style Consistency**: Defines the global art style (e.g., "Cyberpunk", "Watercolor"), aspect ratios, and color palettes, ensuring all generated panels adhere to a unified visual language.
+    *   **Character & Layout Control**: Manages global character traits and storyboard layout preferences (e.g., panel spacing, border styles).
+    *   **Dynamic Synchronization**: Changes to the global config automatically propagate to all storyboard panels, allowing for quick style iterations without manually editing each frame.
+
 ## ✨ Core Features
 
 *   **Project Management**: Supports multi-project management, with each project independently saving story, characters, and storyboard data.
