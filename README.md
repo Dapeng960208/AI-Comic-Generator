@@ -141,14 +141,22 @@ Access in browser: `http://localhost:5173`
     *   Enter your story outline.
     *   Set global styles (e.g., "Japanese Shonen"), aspect ratio, etc.
     *   Click "Generate Storyboard Config", and AI will generate the character list and storyboard script.
+    
+    ![Story & Configuration](assets/story_config.png)
+
 3.  **Character Workshop**:
     *   View AI-generated character settings.
     *   Click "Draw" to generate character portraits.
     *   If there are duplicate characters, use the "Merge Characters" function to clean them up.
+
+    ![Character Workshop](assets/character_studio.png)
+
 4.  **Storyboard Editing**:
     *   Check the description of each panel in the storyboard list.
     *   Click "Generate Image" or "Generate All" to start drawing the comic.
     *   Click on an image to view it in large size and support downloading.
+
+    ![Storyboard Editor](assets/storyboard.png)
 
 ## 📁 Directory Structure
 
