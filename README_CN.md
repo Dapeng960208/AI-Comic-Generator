@@ -192,7 +192,11 @@ aImanhua/
 └── ...
 ```
 
-## 📝 License
+## � 联系方式
+
+邮箱: gjp960208@gmail.com
+
+## �📝 License
 
 MIT License
 
