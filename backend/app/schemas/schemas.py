@@ -36,6 +36,7 @@ class TaskRead(TaskBase):
     project_id: str
     created_at: datetime
     updated_at: datetime
+    logs: List[str] = []
 
 # Project
 class ProjectCreate(ProjectBase):
