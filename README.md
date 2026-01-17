@@ -158,6 +158,29 @@ Access in browser: `http://localhost:5173`
 
     ![Storyboard Editor](assets/storyboard.png)
 
+## 🖼️ Examples
+
+You can find a complete example project in the [example/](./example/) directory, including story scripts, character designs, and generated storyboard panels.
+
+### Character Design
+
+<div align="center">
+  <img src="example/characters/Shen%20Tianhu.png" width="200" alt="Shen Tianhu" />
+  <img src="example/characters/Butler%20Ma.png" width="200" alt="Butler Ma" />
+  <img src="example/characters/苏媚瑶.png" width="200" alt="Su Meiyao" />
+</div>
+
+### Comic Panels
+
+<div align="center">
+  <img src="example/panels/panel_1_1.png" width="45%" />
+  <img src="example/panels/panel_1_2.png" width="45%" />
+</div>
+<div align="center">
+  <img src="example/panels/panel_1_3.png" width="45%" />
+  <img src="example/panels/panel_1_4.png" width="45%" />
+</div>
+
 ## 📁 Directory Structure
 
 ```

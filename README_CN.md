@@ -157,6 +157,29 @@ pnpm dev
 
     ![分镜编辑](assets/storyboard.png)
 
+## 🖼️ 示例展示
+
+您可以在 [example/](./example/) 目录中找到一个完整的示例项目，包含故事脚本、角色设定图和生成的分镜画面。
+
+### 角色设定
+
+<div align="center">
+  <img src="example/characters/Shen%20Tianhu.png" width="200" alt="沈天虎" />
+  <img src="example/characters/Butler%20Ma.png" width="200" alt="马管家" />
+  <img src="example/characters/苏媚瑶.png" width="200" alt="苏媚瑶" />
+</div>
+
+### 漫画分镜
+
+<div align="center">
+  <img src="example/panels/panel_1_1.png" width="45%" />
+  <img src="example/panels/panel_1_2.png" width="45%" />
+</div>
+<div align="center">
+  <img src="example/panels/panel_1_3.png" width="45%" />
+  <img src="example/panels/panel_1_4.png" width="45%" />
+</div>
+
 ## 📁 目录结构
 
 ```
