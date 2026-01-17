@@ -113,7 +113,7 @@ const imageVersion = ref(Date.now())
 
 // Task State
 const activeTasks = ref([])
-const isTaskManagerCollapsed = ref(false)
+const isTaskManagerCollapsed = ref(true)
 const taskPollingInterval = ref(null)
 
 // Dialog State
