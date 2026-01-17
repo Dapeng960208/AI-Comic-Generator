@@ -1,0 +1,522 @@
+你好，我是你的漫画拆分生成专家。我们将共同创作这部融合了“赛博朋克”与“武学科幻”风格的短篇连载漫画——《太阳系之主：大鹏觉醒》。
+
+在本故事中，我们将把“废柴逆袭”的爽感推向极致：从霓虹闪烁的贫民窟最底层，一路杀向掌控星系的戴森球王座。
+
+以下是完整的漫画规划与分镜脚本。
+
+---
+
+### 第一部分：漫画全局配置 (Comic Configuration)
+
+```json
+{
+  "type": "comic_config",
+  "language": "中文简体",
+  "style": "赛博朋克",
+  "bubble_style": {
+    "shape": "带有电子噪声边缘的椭圆",
+    "color": "rgba(0, 0, 0, 0.8)",
+    "font_color": "#00FF41",
+    "stroke_width": "2px"
+  },
+  "narration_style": {
+    "shape": "直角矩形",
+    "color": "#1A1A1B",
+    "font_color": "#FFFFFF",
+    "opacity": 0.9
+  },
+  "border_style": {
+    "width": "3px",
+    "color": "#39FF14",
+    "type": "实线"
+  },
+  "gutter_style": {
+    "type": "标准十字分割",
+    "color": "#000000",
+    "width": "12px"
+  },
+  "layout_settings": {
+    "show_panel_numbers": true,
+    "panel_number_style": {
+      "position": "top-left",
+      "bg_color": "#000000",
+      "text_color": "#00FF41",
+      "font_size": "14px"
+    },
+    "force_uniform_borders": true,
+    "composition_mode": "grid"
+  },
+  "aspect_ratio": "16:9"
+}
+```
+
+---
+
+### 第二部分：角色设定卡 (Character Sheets)
+
+我们将设定三位核心角色：主角大鹏、导师赵老头以及反派“生化奎”。
+
+```json
+[
+  {
+    "type": "character_sheet",
+    "name": "大鹏",
+    "meta_info": {
+      "language": "中文简体",
+      "role": "主角",
+      "personality": "隐忍、坚毅、爆发力强，初期因贫穷而卑微，觉醒后拥有睥睨星系的霸气。",
+      "age": "20岁",
+      "relationships": "由于经脉（神经网络）受损被视为废柴。",
+      "style": "赛博朋克",
+      "feature": "少年感、觉醒后双瞳呈炽热的金色、标志性旧式兜帽卫衣。",
+      "aspect_ratio": "16:9"
+    },
+    "design_panels": [
+      {
+        "view": "Front View (正面)",
+        "description": "黑色凌乱短发，面部消瘦但眼神深邃。穿着打满补丁的深灰色纳米纤维卫衣，左臂是廉价的废旧机械义肢。"
+      },
+      {
+        "view": "Side View (侧面)",
+        "description": "颈部后方有明显的神经网络插槽，插槽周围布满烧焦的红痕。"
+      },
+      {
+        "view": "Clothing (觉醒形态)",
+        "description": "身披流动的金色等离子光带形成的‘太阳神铠’，铠甲表面流动着黑色的古汉字编码。"
+      },
+      {
+        "view": "Accessories (配饰/武器)",
+        "description": "一把由高频振动粒子构成的‘金乌断刀’，刀柄缠绕着废旧电缆。"
+      }
+    ]
+  },
+  {
+    "type": "character_sheet",
+    "name": "赵老头",
+    "meta_info": {
+      "language": "中文简体",
+      "role": "配角",
+      "personality": "市侩、狡黠，实则是隐居的旧时代程序宗师。",
+      "age": "70岁左右",
+      "relationships": "大鹏的救命恩人和兼职老板。",
+      "style": "赛博朋克",
+      "feature": "驼背、右眼是多焦距红色义眼、满口黄牙。",
+      "aspect_ratio": "16:9"
+    },
+    "design_panels": [
+      {
+        "view": "Clothing (服装)",
+        "description": "穿着沾满油污的脏绿色工装连体服，胸口别着一根多功能电子焊笔。"
+      },
+      {
+        "view": "Accessories (配饰)",
+        "description": "总是拿着一个复古的电子烟斗，吐出的烟雾带有全息数据流。"
+      }
+    ]
+  },
+  {
+    "type": "character_sheet",
+    "name": "生化奎",
+    "meta_info": {
+      "language": "中文简体",
+      "role": "反派",
+      "personality": "残暴、贪婪、极度迷信力量。",
+      "age": "45岁",
+      "relationships": "九龙城寨的黑市头目，财阀的走狗。",
+      "style": "赛博朋克",
+      "feature": "全身80%高度机械化、体型巨大、充满压迫感。",
+      "aspect_ratio": "16:9"
+    },
+    "design_panels": [
+      {
+        "view": "Front View (正面)",
+        "description": "裸露的金属肌肉纹理，胸口安装着一颗泛着红光的巨型能源核心。头部没有皮肤，覆盖着铬合金装甲。"
+      },
+      {
+        "view": "Accessories (武器)",
+        "description": "双臂可变形为等离子加特林和重型震动锤。"
+      }
+    ]
+  }
+]
+```
+
+---
+
+### 第三部分：故事分镜生成 (Story Storyboard)
+
+我们将开始生成 **36个分镜**，每四个为一组，总计 9 组 JSON。
+
+#### 第 1-4 分镜：底层生活与意外奇遇
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "1/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏"],
+  "plot_breakdown": [
+    {
+      "panel": 1,
+      "scene": "霓虹重庆地底第100层，垃圾填埋场。",
+      "action": "大鹏在如山的电子垃圾中翻找，头顶是无数交错的金属管道，雨水混杂着机油滴落。",
+      "dialogue": "旁白：在这个时代，经脉受损的人，连做电池的资格都没有。"
+    },
+    {
+      "panel": 2,
+      "scene": "大鹏的特写。",
+      "action": "他满脸污垢，喘着粗气，机械左手因为短路而迸发火花，他自嘲地看着自己的废手。",
+      "dialogue": "大鹏：这种烂日子，什么时候是个头……"
+    },
+    {
+      "panel": 3,
+      "scene": "废墟深处。",
+      "action": "大鹏的手触碰到一个散发着微弱暗金色光芒的物体，那是一枚刻满古老纹路的高维芯片。",
+      "dialogue": "大鹏：这是什么？不像是财阀的货色。"
+    },
+    {
+      "panel": 4,
+      "scene": "仰视视角。",
+      "action": "大鹏拿起芯片的瞬间，芯片化作一道金光刺入他的后颈插槽。天空中一道旱雷炸响。",
+      "dialogue": "系统提示音：检测到太阳神级神经回路，正在重塑使用者经脉……"
+    }
+  ]
+}
+```
+
+#### 第 5-8 分镜：初显身手与危机降临
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "2/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏", "赵老头"],
+  "plot_breakdown": [
+    {
+      "panel": 5,
+      "scene": "赵老头的杂货铺，昏暗的黄色灯光。",
+      "action": "大鹏痛苦地跪在地上，浑身冒出金色蒸汽。赵老头惊恐地看着电脑屏幕上疯狂跳动的数据。",
+      "dialogue": "赵老头：臭小子！你的神经元带宽在指数级增长！你到底吃了什么？！"
+    },
+    {
+      "panel": 6,
+      "scene": "杂货铺门外。",
+      "action": "几道红色的激光瞄准镜红点扫过墙壁。沉重的脚步声让地板颤抖。",
+      "dialogue": "杂兵甲：生化奎爷说了，那枚‘古芯’就在这，搜！"
+    },
+    {
+      "panel": 7,
+      "scene": "大鹏的特写。",
+      "action": "他的瞳孔彻底变为金色，眼角的泪痕被瞬间蒸发，神态变得极其冷静和肃杀。",
+      "dialogue": "大鹏：老头，躲远点。我感觉……我现在能看清空气中每一颗电子的流动。"
+    },
+    {
+      "panel": 8,
+      "scene": "杂货铺门口爆炸。",
+      "action": "大鹏身形如幻影般冲出，画面采用高速动感模糊，他仅用肉手就接住了射来的电浆子弹。",
+      "dialogue": "大鹏：这种速度，太慢了。"
+    }
+  ]
+}
+```
+
+#### 第 9-12 分镜：废柴逆袭，暴力碾压
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "3/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏", "生化奎"],
+  "plot_breakdown": [
+    {
+      "panel": 9,
+      "scene": "街道战场，全景视角。",
+      "action": "大鹏站在一群倒地哀嚎的生化改造人中间，手中握着夺来的断刀。生化奎从重型机甲车上跳下，地面崩裂。",
+      "dialogue": "生化奎：小子，一个经脉断裂的废柴，居然也敢反抗财阀？"
+    },
+    {
+      "panel": 10,
+      "scene": "生化奎攻击动作。",
+      "action": "生化奎巨大的机械臂化作重锤狠狠砸下。大鹏单手撑地，以一个极其轻盈的武术姿势（燕子翻身）避开，地面被砸出巨坑。",
+      "dialogue": "大鹏：财阀？在我眼里，你们只是太阳系的一只寄生虫。"
+    },
+    {
+      "panel": 11,
+      "scene": "大鹏的反击。",
+      "action": "大鹏将体内的“太阳之气”注入断刀，刀身喷发出三米长的金色火焰。一记横斩，斩断了生化奎的钛合金护盾。",
+      "dialogue": "旁白：古武与高科技的融合——金乌斩！"
+    },
+    {
+      "panel": 12,
+      "scene": "生化奎的惊恐脸部特写。",
+      "action": "他在大鹏的金色光芒映射下显得渺小无力，全身警报红光狂闪。",
+      "dialogue": "生化奎：不可能！这种能量强度……你是太阳神裔？！"
+    }
+  ]
+}
+```
+
+#### 第 13-16 分镜：踏上征程，剑指云端
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "4/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏", "赵老头"],
+  "plot_breakdown": [
+    {
+      "panel": 13,
+      "scene": "战斗结束的废墟。",
+      "action": "大鹏收刀，金光散去。生化奎已成为一堆废铁。赵老头颤抖着走出来，递给大鹏一个古老的黑色软盘。",
+      "dialogue": "赵老头：这是前往‘上层世界’的密匙。你的命运不在地底，去夺回属于人类的太阳吧。"
+    },
+    {
+      "panel": 14,
+      "scene": "远景。",
+      "action": "大鹏站在高楼边缘，仰望天空。云层上方，巨大的太空电梯直插云霄，那里是财阀掌控的轨道城。",
+      "dialogue": "大鹏：太阳系不需要神，只需要一个审判者。"
+    },
+    {
+      "panel": 15,
+      "scene": "大鹏换装。",
+      "action": "大鹏穿上了赵老头压箱底的黑色纳米披风，戴上兜帽。金色的电子纹路在披风下若隐若现。",
+      "dialogue": "旁白：蛰伏二十年，大鹏一日同风起。"
+    },
+    {
+      "panel": 16,
+      "scene": "太空电梯站台。",
+      "action": "大鹏孤身面对成百上千的财阀机甲军团，他缓缓拔出断刀，身后是即将落下的夕阳。",
+      "dialogue": "大鹏：挡我者，死。"
+    }
+  ]
+}
+```
+
+#### 第 17-20 分镜：血战太空电梯
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "5/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏"],
+  "plot_breakdown": [
+    {
+      "panel": 17,
+      "scene": "高速上升的电梯舱内。",
+      "action": "大鹏在密闭空间内施展身法，留下一道道金色残影。机甲的零件在空中飞舞。",
+      "dialogue": "大鹏：第一层防护，破。"
+    },
+    {
+      "panel": 18,
+      "scene": "电梯外壁俯瞰视角。",
+      "action": "大鹏用断刀插入外壁减速，另一只手凝聚金色光球，直接轰爆了一架追击的无人战斗机。",
+      "dialogue": "旁白：他的体内，正孕育着一颗恒星。"
+    },
+    {
+      "panel": 19,
+      "scene": "俯瞰地面的大视野。",
+      "action": "电梯冲出大气层，下方的大地变成了一个蓝色的圆球。大鹏的身体因为高压而略显颤抖，但眼神更加明亮。",
+      "dialogue": "大鹏：这就是他们垄断了百年的风景吗？"
+    },
+    {
+      "panel": 20,
+      "scene": "抵达轨道城大门。",
+      "action": "舱门打开，迎接他的是数百名手持高频光剑的精英武士。大鹏摘下兜帽，长发狂乱舞动。",
+      "dialogue": "精英武士：卑贱的底层种，禁地不容亵渎！"
+    }
+  ]
+}
+```
+
+#### 第 21-24 分镜：直面财阀之首
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "6/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏", "财阀主席"],
+  "plot_breakdown": [
+    {
+      "panel": 21,
+      "scene": "黄金打造的宫殿大厅。",
+      "action": "财阀主席坐在巨大的全息球体（控制着戴森球）前，他是一个完全被转化为液态金属的怪人。",
+      "dialogue": "财阀主席：大鹏，如果你愿意，我可以把火星交给你管理。"
+    },
+    {
+      "panel": 22,
+      "scene": "大鹏冷笑特写。",
+      "action": "大鹏的脚下浮现出八卦阵图，但这阵图是由纯净的能源链路构成。",
+      "dialogue": "大鹏：我不想要火星。我想要你，从那个位子上滚下来。"
+    },
+    {
+      "panel": 23,
+      "scene": "战斗爆发。",
+      "action": "液态金属化作漫天箭雨。大鹏将断刀刺向地面，一个半球形的金色力场瞬间撑开。",
+      "dialogue": "大鹏：金乌领域·极昼！"
+    },
+    {
+      "panel": 24,
+      "scene": "爆炸特效。",
+      "action": "整个宫殿因为能量过载而开始崩塌。大鹏冲破液态金属的包围，直取主席的核心核芯。",
+      "dialogue": "财阀主席：不！那是太阳系的命脉！你毁了它，所有人都会死！"
+    }
+  ]
+}
+```
+
+#### 第 25-28 分镜：灵魂升维，主宰一切
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "7/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏"],
+  "plot_breakdown": [
+    {
+      "panel": 25,
+      "scene": "核心机房中心。",
+      "action": "大鹏的手触碰到那颗控制全系能源的“太阳核心”。无数数据流像狂暴的洪水般灌入他的脑海。",
+      "dialogue": "系统：检测到超神进化序列……使用者意识正在与戴森球同步。"
+    },
+    {
+      "panel": 26,
+      "scene": "精神世界。",
+      "action": "大鹏看到自己化作一只翼展亿万里的金色大鹏鸟，双翼一振，便扫过水星与金星。",
+      "dialogue": "大鹏（内心）：这才是真正的力量……这就是，众生的生死。"
+    },
+    {
+      "panel": 27,
+      "scene": "轨道城外景。",
+      "action": "原本死寂的太空突然亮起万丈金光，戴森球的每一个叶片都开始按特定的频率颤动，向地球输送纯净能源。",
+      "dialogue": "旁白：这一刻，长夜终结。"
+    },
+    {
+      "panel": 28,
+      "scene": "大鹏的全身特写。",
+      "action": "他缓缓升到半空，身体已经半透明化，充满了恒星般的质感。财阀主席在他脚下哀嚎着融化。",
+      "dialogue": "大鹏：从今天起，太阳系不再有阶级，只有光明。"
+    }
+  ]
+}
+```
+
+#### 第 29-32 分镜：审判与重塑
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "8/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏", "赵老头"],
+  "plot_breakdown": [
+    {
+      "panel": 29,
+      "scene": "地底百层，大屏幕前。",
+      "action": "贫民们走出贫民窟，抬头望天。原本灰暗的酸雨云层消散，久违的真阳光洒在他们脸上。",
+      "dialogue": "路人甲：是光……是真的太阳光！"
+    },
+    {
+      "panel": 30,
+      "scene": "赵老头的特写。",
+      "action": "他拿着烟斗，欣慰地看着天空中那个若隐若现的金色身影，那是他曾收留过的少年。",
+      "dialogue": "赵老头：这小子，真的把天给捅破了。"
+    },
+    {
+      "panel": 31,
+      "scene": "轨道城宫殿。",
+      "action": "大鹏坐到了原本属于财阀的主座上，但他面前没有酒杯，只有掌控星系的虚拟星图。",
+      "dialogue": "大鹏：开启资源平等分配协议。重启火星生态系统。"
+    },
+    {
+      "panel": 32,
+      "scene": "大鹏的手部动作。",
+      "action": "他随手一划，星图上原本灰暗的木星、土星卫星纷纷点亮。",
+      "dialogue": "大鹏：我要这星系，再无黑暗。"
+    }
+  ]
+}
+```
+
+#### 第 33-36 分镜：永恒之主（大结局）
+```json
+{
+  "type": "storyboard",
+  "meta_info": {
+    "style": "赛博朋克",
+    "language": "中文简体",
+    "volume": "9/9",
+    "aspect_ratio": "16:9",
+    "layout_settings": { "show_panel_numbers": true, "composition_mode": "grid" }
+  },
+  "characters": ["大鹏"],
+  "plot_breakdown": [
+    {
+      "panel": 33,
+      "scene": "太阳系全景图。",
+      "action": "八大行星被金色的脉络连接在一起，构成了一幅宏大的星空画卷。那是大鹏的意志延伸。",
+      "dialogue": "旁白：他不再是一个人，他是这片星空的脊梁。"
+    },
+    {
+      "panel": 34,
+      "scene": "大鹏的正面特写。",
+      "action": "他的面容依然保持着20岁的模样，但神情已经庄严如神祇。他缓缓闭上眼，感受着亿万生灵的呼吸。",
+      "dialogue": "大鹏：使命尚未结束。星辰大海，才是征途。"
+    },
+    {
+      "panel": 35,
+      "scene": "侧面镜头。",
+      "action": "大鹏站起身，推开宫殿的大门。门外不是走廊，而是直接通往无尽深空的星门。",
+      "dialogue": "大鹏：下一个目标，半人马座。"
+    },
+    {
+      "panel": 36,
+      "scene": "最终震撼画面（Splash Page）。",
+      "action": "金色的大鹏鸟虚影在整个太阳系背景上展开，双翼遮天蔽日。下方是一行遒劲的大字。",
+      "dialogue": "大标题：太阳系之主：大鹏。"
+    }
+  ]
+}
+```
+
+---
+
+### 专家总结
+这部作品成功捕捉了“赛博朋克”的视觉张力与“废柴逆袭”的爽文核心。通过从地底垃圾场到太阳系王座的跨度，完成了史诗级的叙事转换。JSON 结构严谨，每个分镜都包含了光影与动作的精细指引，适合直接进入绘制或AI生成流程。

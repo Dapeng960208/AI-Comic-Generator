@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlmodel
+pydantic
+pydantic-settings
+python-dotenv
+google-genai
+openai
+requests
+alembic
+pymysql
+aiofiles

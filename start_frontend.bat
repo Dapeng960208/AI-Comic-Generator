@@ -1,0 +1,6 @@
+@echo off
+cd frontend
+echo Installing dependencies (if needed)...
+call pnpm install
+echo Starting Frontend...
+call pnpm dev
