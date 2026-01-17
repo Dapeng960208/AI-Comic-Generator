@@ -4,6 +4,7 @@ from typing import List, Optional
 from sqlmodel import Session
 from app.models.models import ModelConfig
 from google import genai
+from google.genai import types
 from PIL import Image
 import io
 
@@ -39,7 +40,7 @@ class AIService:
             print(f"Error generating storyboard: {e}")
             raise e
 
-    def generate_image(self, prompt: str, context_images: List[str] = None) -> bytes:
+    def generate_image(self, prompt: str, context_images: List[str] = None, aspect_ratio: str = "16:9", resolution: str = "2K") -> bytes:
         client, model_name = self._get_client("image")
         
         contents = [prompt]
@@ -62,6 +63,12 @@ class AIService:
                 response = client.models.generate_content(
                     model=model_name,
                     contents=contents,
+                    config=types.GenerateContentConfig(
+                        image_config=types.ImageConfig(
+                            aspect_ratio=aspect_ratio,
+                            image_size=resolution
+                        ),
+                    )
                 )
                 
                 if response.parts:

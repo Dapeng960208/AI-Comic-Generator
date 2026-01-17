@@ -18,6 +18,24 @@ import sys
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
+def log_task_event(session, task_id, message):
+    logger.info(message)
+    try:
+        task = session.get(Task, task_id)
+        if task:
+            if task.logs is None:
+                task.logs = []
+            import datetime
+            timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+            # Create new list to ensure SQLModel detects change
+            current_logs = list(task.logs) if task.logs else []
+            current_logs.append(f"[{timestamp}] {message}")
+            task.logs = current_logs
+            session.add(task)
+            session.commit()
+    except Exception as e:
+        logger.error(f"Failed to log task event: {e}")
+
 def save_generated_image(session, project_id, entity_type, entity_id, image_bytes):
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     project_static_dir = os.path.join(base_dir, "static", project_id)
@@ -72,7 +90,7 @@ def generate_storyboard_task(task_id: str, project_id: str, user_input: str):
         
         try:
             project = crud_project.get_project(session, project_id)
-            logger.info(f"Project found: {project.title}")
+            log_task_event(session, task_id, f"Project found: {project.title}")
             
             # Save User Input (Persist it)
             project.story_input = user_input
@@ -116,7 +134,7 @@ def generate_storyboard_task(task_id: str, project_id: str, user_input: str):
             if prefs:
                 final_prompt += "\n\nRequirements:\n" + "\n".join(prefs)
 
-            logger.info("Calling AI service for storyboard generation...")
+            log_task_event(session, task_id, "Calling AI service for storyboard generation... This may take a while.")
             generated_text = ai.generate_storyboard(system_prompt, final_prompt)
             
             # --- Save Generated Text to Temp File ---
@@ -131,12 +149,12 @@ def generate_storyboard_task(task_id: str, project_id: str, user_input: str):
             try:
                 with open(temp_file, "w", encoding="utf-8") as f:
                     f.write(generated_text)
-                logger.info(f"Saved raw AI output to {temp_file}")
+                log_task_event(session, task_id, f"Saved raw AI output to {temp_file}")
             except Exception as e:
                 logger.error(f"Failed to save temp AI output: {e}")
             # ----------------------------------------
 
-            logger.info("AI generation complete. Extracting JSON blocks...")
+            log_task_event(session, task_id, "AI generation complete. Extracting JSON blocks...")
             json_blocks = extract_json_blocks(generated_text)
             
             char_blocks = [b for b in json_blocks if b.get("type") == "character_sheet"]
@@ -171,7 +189,7 @@ def generate_storyboard_task(task_id: str, project_id: str, user_input: str):
                     missing_chars.append(name)
             
             if missing_chars:
-                logger.info(f"Detected missing characters: {missing_chars}. Requesting AI to generate them...")
+                log_task_event(session, task_id, f"Detected missing characters: {missing_chars}. Requesting AI to generate them...")
                 fix_prompt = f"You missed generating character sheets for the following characters that appeared in the storyboard: {', '.join(missing_chars)}. Please generate 'character_sheet' JSON blocks for them now. Do not generate anything else."
                 
                 try:
@@ -179,7 +197,7 @@ def generate_storyboard_task(task_id: str, project_id: str, user_input: str):
                     fix_blocks = extract_json_blocks(fix_response)
                     new_chars = [b for b in fix_blocks if b.get("type") == "character_sheet"]
                     if new_chars:
-                        logger.info(f"Successfully generated {len(new_chars)} missing characters.")
+                        log_task_event(session, task_id, f"Successfully generated {len(new_chars)} missing characters.")
                         char_blocks.extend(new_chars)
                 except Exception as e:
                     logger.error(f"Failed to generate missing characters: {e}")
@@ -283,35 +301,49 @@ def generate_all_images_task(task_id: str, project_id: str):
 
             # 1. Generate Characters
             total_chars = len(project.characters)
-            logger.info(f"Generating {total_chars} characters...")
+            log_task_event(session, task_id, f"Generating {total_chars} characters...")
             for i, char in enumerate(project.characters):
                 if char.image_url: 
-                    logger.info(f"Character {char.name} already has image, skipping.")
+                    log_task_event(session, task_id, f"Character {char.name} already has image, skipping.")
                     continue 
                 
-                logger.info(f"Generating image for character: {char.name}")
+                log_task_event(session, task_id, f"Generating image for character: {char.name}")
                 json_prompt = json.dumps(char.data, ensure_ascii=False, indent=2)
                 json_prompt += "\n\n generate a character design sheet with 4 panels: front view, side view, clothing details, accessories."
                 
                 try:
-                    image_bytes = ai.generate_image(json_prompt)
+                    image_bytes = ai.generate_image(
+                        json_prompt, 
+                        aspect_ratio=project.aspect_ratio or "16:9",
+                        resolution=project.resolution or "2K"
+                    )
                     relative_url = save_generated_image(session, project_id, "character", char.id, image_bytes)
                     char.image_url = relative_url
                     session.add(char)
                     session.commit()
-                    logger.info(f"Character {char.name} generated successfully.")
+                    log_task_event(session, task_id, f"Character {char.name} generated successfully.")
+                    
+                    # Update task progress
+                    progress = int(((i + 1) / total_chars) * 100)
+                    task.progress = progress
+                    session.add(task)
+                    session.commit()
+                    
                 except Exception as e:
                     logger.error(f"Failed to generate char {char.id}: {e}")
-                    print(f"Failed to generate char {char.id}: {e}")
+                    log_task_event(session, task_id, f"Failed to generate char {char.id}: {e}")
                 
-                # Update task progress (Characters are 20% of work?)
-                # Let's simple split: chars + storyboard items
+                # Update task progress
+                # progress = int(((i + 1) / total_chars) * 100)
+                # task.progress = progress
+                # session.add(task)
+                # session.commit()
                 
             # 2. Generate Storyboard Items (Sequential)
             # Re-fetch items to ensure order
             items = sorted(project.storyboard_items, key=lambda x: x.sequence)
             total_items = len(items)
-            logger.info(f"Generating {total_items} storyboard panels...")
+            log_task_event(session, task_id, f"Generating {total_items} storyboard panels...")
             
             generated_history = [] # Keep track of generated images for context
             
@@ -321,25 +353,26 @@ def generate_all_images_task(task_id: str, project_id: str):
             # For "one click", let's assume we scan all items.
             
             for i, item in enumerate(items):
-                task.progress = int((i / total_items) * 100)
-                session.add(task)
-                session.commit()
+                # Update progress at start of loop
+                # task.progress = int((i / total_items) * 100)
+                # session.add(task)
+                # session.commit()
                 
-                if item.image_url:
-                    # Add to history
-                    filename = os.path.basename(item.image_url)
-                    # We need to find where it is stored.
-                    # Assuming standard structure
-                    # We need absolute path for history
-                    # item.image_url is like /static/{project_id}/panels/{filename}
-                    rel_path = item.image_url.lstrip("/")
-                    abs_path = os.path.join(base_dir, rel_path.replace("/", os.sep))
-                    
-                    if os.path.exists(abs_path):
-                        generated_history.append(abs_path)
-                    continue
+                # if item.image_url:
+                #    # Add to history
+                #    filename = os.path.basename(item.image_url)
+                #    # We need to find where it is stored.
+                #    # Assuming standard structure
+                #    # We need absolute path for history
+                #    # item.image_url is like /static/{project_id}/panels/{filename}
+                #    rel_path = item.image_url.lstrip("/")
+                #    abs_path = os.path.join(base_dir, rel_path.replace("/", os.sep))
+                #    
+                #    if os.path.exists(abs_path):
+                #        generated_history.append(abs_path)
+                #    continue
                 
-                logger.info(f"Generating panel {item.sequence}...")
+                log_task_event(session, task_id, f"Generating panel {item.sequence}...")
                 
                 # Prepare Context
                 context_images = []
@@ -381,11 +414,21 @@ def generate_all_images_task(task_id: str, project_id: str):
                 json_prompt += "\n\n use json block as user input prompt to generate 2*2 grid comic image."
                 
                 try:
-                    image_bytes = ai.generate_image(json_prompt, context_images)
+                    image_bytes = ai.generate_image(
+                        json_prompt, 
+                        context_images=context_images,
+                        aspect_ratio=project.aspect_ratio or "16:9",
+                        resolution=project.resolution or "2K"
+                    )
                     relative_url = save_generated_image(session, project_id, "panel", item.id, image_bytes)
                     
                     item.image_url = relative_url
                     session.add(item)
+                    session.commit()
+                    
+                    # Update progress
+                    task.progress = int(((i + 1) / total_items) * 100)
+                    session.add(task)
                     session.commit()
                     
                     # Add to history (absolute path for context usage)
@@ -395,17 +438,17 @@ def generate_all_images_task(task_id: str, project_id: str):
                     # strip leading /
                     abs_path = os.path.join(base_dir, relative_url.lstrip("/").replace("/", os.sep))
                     generated_history.append(abs_path)
-                    logger.info(f"Panel {item.sequence} generated successfully.")
+                    log_task_event(session, task_id, f"Panel {item.sequence} generated successfully.")
                     
                 except Exception as e:
                     logger.error(f"Failed to generate panel {item.id}: {e}")
-                    print(f"Failed to generate panel {item.id}: {e}")
+                    log_task_event(session, task_id, f"Failed to generate panel {item.id}: {e}")
             
             task.status = "completed"
             task.progress = 100
             session.add(task)
             session.commit()
-            logger.info(f"Batch generation task {task_id} completed successfully.")
+            log_task_event(session, task_id, f"Batch generation task {task_id} completed successfully.")
             
         except Exception as e:
             logger.error(f"Batch generation task {task_id} failed: {e}")
@@ -433,14 +476,14 @@ def generate_all_characters_task(task_id: str, project_id: str):
             ai = AIService(session)
             
             total_chars = len(project.characters)
-            logger.info(f"Generating {total_chars} characters...")
+            log_task_event(session, task_id, f"Generating {total_chars} characters...")
             
             for i, char in enumerate(project.characters):
-                if char.image_url: 
-                    logger.info(f"Character {char.name} already has image, skipping.")
-                    continue 
+                # if char.image_url: 
+                #    logger.info(f"Character {char.name} already has image, skipping.")
+                #    continue 
                 
-                logger.info(f"Generating image for character: {char.name}")
+                log_task_event(session, task_id, f"Generating image for character: {char.name}")
                 
                 # Construct Natural Language Prompt from JSON
                 data = char.data
@@ -475,26 +518,38 @@ Ensure the character's expression and pose reflect their personality: {personali
 """
                 
                 try:
-                    image_bytes = ai.generate_image(prompt)
+                    image_bytes = ai.generate_image(
+                        prompt,
+                        aspect_ratio=project.aspect_ratio or "16:9",
+                        resolution=project.resolution or "2K"
+                    )
                     relative_url = save_generated_image(session, project_id, "character", char.id, image_bytes)
                     char.image_url = relative_url
                     session.add(char)
                     session.commit()
-                    logger.info(f"Character {char.name} generated successfully.")
+                    log_task_event(session, task_id, f"Character {char.name} generated successfully.")
+                    
+                    # Update progress
+                    progress = int(((i + 1) / total_chars) * 100)
+                    task.progress = progress
+                    session.add(task)
+                    session.commit()
+                    
                 except Exception as e:
                     logger.error(f"Failed to generate char {char.id}: {e}")
+                    log_task_event(session, task_id, f"Failed to generate char {char.id}: {e}")
                 
                 # Update progress
-                progress = int(((i + 1) / total_chars) * 100)
-                task.progress = progress
-                session.add(task)
-                session.commit()
+                # progress = int(((i + 1) / total_chars) * 100)
+                # task.progress = progress
+                # session.add(task)
+                # session.commit()
 
             task.status = "completed"
             task.progress = 100
             session.add(task)
             session.commit()
-            logger.info(f"Batch character generation task {task_id} completed successfully.")
+            log_task_event(session, task_id, f"Batch character generation task {task_id} completed successfully.")
             
         except Exception as e:
             logger.error(f"Batch character generation task {task_id} failed: {e}")
@@ -556,8 +611,12 @@ Include Front View, Side View, and detailed clothing/accessories.
 Ensure the character's expression and pose reflect their personality: {personality}.
 """
             
-            logger.info(f"Calling AI service for character {char.name}...")
-            image_bytes = ai.generate_image(prompt)
+            log_task_event(session, task_id, f"Calling AI service for character {char.name}...")
+            image_bytes = ai.generate_image(
+                prompt,
+                aspect_ratio=char.project.aspect_ratio or "16:9",
+                resolution=char.project.resolution or "2K"
+            )
             
             relative_url = save_generated_image(session, char.project_id, "character", char.id, image_bytes)
             
@@ -568,10 +627,11 @@ Ensure the character's expression and pose reflect their personality: {personali
             task.progress = 100
             session.add(task)
             session.commit()
-            logger.info(f"Character task {task_id} completed successfully.")
+            log_task_event(session, task_id, f"Character task {task_id} completed successfully.")
             
         except Exception as e:
             logger.error(f"Character task {task_id} failed: {e}")
+            log_task_event(session, task_id, f"Character task {task_id} failed: {e}")
             traceback.print_exc()
             task.status = "failed"
             task.message = str(e)
@@ -789,8 +849,13 @@ def generate_panel_task(task_id: str, item_id: int):
             if meta_style:
                  json_prompt += f"\n\nStyle Consistency Requirement: {meta_style}. Ensure the visual style matches the provided context images."
         
-            logger.info(f"Calling AI service for panel {item.sequence}...")
-            image_bytes = ai.generate_image(json_prompt, context_images)
+            log_task_event(session, task_id, f"Calling AI service for panel {item.sequence}...")
+            image_bytes = ai.generate_image(
+                json_prompt,  
+                context_images=context_images,
+                aspect_ratio=project.aspect_ratio or "16:9",
+                resolution=project.resolution or "2K"
+            )
             
             relative_url = save_generated_image(session, project.id, "panel", item.id, image_bytes)
             item.image_url = relative_url
@@ -800,10 +865,11 @@ def generate_panel_task(task_id: str, item_id: int):
             task.progress = 100
             session.add(task)
             session.commit()
-            logger.info(f"Panel task {task_id} completed successfully.")
+            log_task_event(session, task_id, f"Panel task {task_id} completed successfully.")
             
         except Exception as e:
             logger.error(f"Panel task {task_id} failed: {e}")
+            log_task_event(session, task_id, f"Panel task {task_id} failed: {e}")
             traceback.print_exc()
             task.status = "failed"
             task.message = str(e)

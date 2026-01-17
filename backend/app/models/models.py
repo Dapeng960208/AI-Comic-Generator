@@ -22,6 +22,7 @@ class ProjectBase(SQLModel):
     language: Optional[str] = "zh-CN"
     panel_count: Optional[int] = 16
     aspect_ratio: Optional[str] = "16:9"
+    resolution: Optional[str] = "2K"
 
 class CharacterBase(SQLModel):
     name: str
@@ -41,6 +42,7 @@ class TaskBase(SQLModel):
     status: str # 'pending', 'processing', 'completed', 'failed'
     progress: int = 0 # 0-100
     message: Optional[str] = None
+    logs: List[str] = Field(default=[], sa_column=Column(JSON))
     name: Optional[str] = None
     description: Optional[str] = None
     result: Dict = Field(default={}, sa_column=Column(JSON))

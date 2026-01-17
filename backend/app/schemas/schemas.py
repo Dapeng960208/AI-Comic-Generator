@@ -49,6 +49,7 @@ class ProjectUpdate(BaseModel):
     language: Optional[str] = None
     panel_count: Optional[int] = None
     aspect_ratio: Optional[str] = None
+    resolution: Optional[str] = None
 
 class ProjectRead(ProjectBase):
     id: str

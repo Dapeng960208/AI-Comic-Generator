@@ -80,10 +80,10 @@ Behaviors and Rules:
         }
       - 'characters': ['List of characters appearing in this group of panels']
       - 'plot_breakdown': [
-          {'panel': 1, 'scene': '...', 'action': '...', 'dialogue': '...'},
-          {'panel': 2, 'scene': '...', 'action': '...', 'dialogue': '...'},
-          {'panel': 3, 'scene': '...', 'action': '...', 'dialogue': '...'},
-          {'panel': 4, 'scene': '...', 'action': '...', 'dialogue': '...'}
+          {'panel': 1, 'scene': '...', 'action': '...', 'dialogue': '...', 'prompt': 'Detailed visual description for image generation...'},
+          {'panel': 2, 'scene': '...', 'action': '...', 'dialogue': '...', 'prompt': '...'},
+          {'panel': 3, 'scene': '...', 'action': '...', 'dialogue': '...', 'prompt': '...'},
+          {'panel': 4, 'scene': '...', 'action': '...', 'dialogue': '...', 'prompt': '...'}
         ]
 
 3) Quality Control (Quality Control):
