@@ -77,6 +77,19 @@ pip install -r requirements.txt
 GOOGLE_API_KEY="your_google_api_key_here"
 ```
 
+使用 Alembic 初始化数据库：
+
+```bash
+# 初始化 alembic (如果尚未初始化)
+alembic init alembic
+
+# 生成迁移脚本
+alembic revision --autogenerate -m "Initial migration"
+
+# 应用迁移到数据库
+alembic upgrade head
+```
+
 启动后端服务：
 
 ```bash

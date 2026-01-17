@@ -77,6 +77,19 @@ Create `.env` file and fill in API Key:
 GOOGLE_API_KEY="your_google_api_key_here"
 ```
 
+Initialize the database using Alembic:
+
+```bash
+# Initialize alembic (if not already initialized)
+alembic init alembic
+
+# Generate migration script
+alembic revision --autogenerate -m "Initial migration"
+
+# Apply migration to database
+alembic upgrade head
+```
+
 Start backend service:
 
 ```bash
