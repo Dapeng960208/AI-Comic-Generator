@@ -25,3 +25,4 @@ backend/static/*.png
 # Alembic
 backend/alembic.ini
 backend/alembic/
+.trae/
