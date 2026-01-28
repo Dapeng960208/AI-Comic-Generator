@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 from typing import List, Optional
 from sqlmodel import Session
 from app.models.models import ModelConfig
@@ -7,6 +8,8 @@ from google import genai
 from google.genai import types
 from PIL import Image
 import io
+
+logger = logging.getLogger(__name__)
 
 class AIService:
     def __init__(self, session: Session):
@@ -30,15 +33,20 @@ class AIService:
         
         full_prompt = f"{system_prompt}\n\nUser Input: {user_input}\n\nPlease generate the full storyboard in JSON format as requested."
         
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=full_prompt
-            )
-            return response.text
-        except Exception as e:
-            print(f"Error generating storyboard: {e}")
-            raise e
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=full_prompt
+                )
+                return response.text
+            except Exception as e:
+                logger.error(f"Error generating storyboard (Attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                raise e
 
     def generate_image(self, prompt: str, context_images: List[str] = None, aspect_ratio: str = "16:9", resolution: str = "2K") -> bytes:
         client, model_name = self._get_client("image")
@@ -51,15 +59,20 @@ class AIService:
                         prev_img = Image.open(img_path)
                         contents.append(prev_img)
                     except Exception as e:
-                        print(f"Failed to load context image {img_path}: {e}")
+                        logger.warning(f"Failed to load context image {img_path}: {e}")
                 else:
                     # Log missing context image but don't fail, just skip it
-                    print(f"Warning: Context image not found at {img_path}, skipping.")
+                    logger.warning(f"Warning: Context image not found at {img_path}, skipping.")
 
         # Retry loop
         max_retries = 3
         for attempt in range(max_retries):
             try:
+                logger.info(f"DEBUG: Starting image generation attempt {attempt + 1}/{max_retries} with model {model_name}...")
+                logger.info(f"DEBUG: Prompt length: {len(prompt)}")
+                if context_images:
+                    logger.info(f"DEBUG: Context images count: {len(context_images)}")
+
                 response = client.models.generate_content(
                     model=model_name,
                     contents=contents,
@@ -70,28 +83,30 @@ class AIService:
                         ),
                     )
                 )
+                logger.info(f"DEBUG: Generation API call completed for attempt {attempt + 1}")
                 
                 if response.parts:
                     for part in response.parts:
                         if part.inline_data is not None:
                             image_data = part.inline_data.data
                             if len(image_data) > 0:
+                                logger.info(f"DEBUG: Successfully received image data ({len(image_data)} bytes)")
                                 return image_data
                             else:
-                                print(f"Warning: Received empty image data on attempt {attempt + 1}")
+                                logger.warning(f"Warning: Received empty image data on attempt {attempt + 1}")
                 
                 # Check for text refusal/error
                 if response.text:
-                    print(f"Model response text (no image): {response.text}")
+                    logger.warning(f"Model response text (no image): {response.text}")
                     
-                print(f"Attempt {attempt + 1} failed: No valid image data found in response.")
+                logger.warning(f"Attempt {attempt + 1} failed: No valid image data found in response.")
                 if attempt == max_retries - 1:
                     raise ValueError(f"No image found in response after {max_retries} retries. Last response: {response.text if response.text else 'Empty'}")
                 
                 time.sleep(2 ** attempt)
                 
             except Exception as e:
-                print(f"Error generating image (Attempt {attempt + 1}/{max_retries}): {e}")
+                logger.error(f"Error generating image (Attempt {attempt + 1}/{max_retries}): {e}")
                 if attempt < max_retries - 1:
                     time.sleep(2 ** attempt)
                     continue

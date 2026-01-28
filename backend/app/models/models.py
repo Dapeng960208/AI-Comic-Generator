@@ -42,7 +42,6 @@ class TaskBase(SQLModel):
     status: str # 'pending', 'processing', 'completed', 'failed'
     progress: int = 0 # 0-100
     message: Optional[str] = None
-    logs: List[str] = Field(default=[], sa_column=Column(JSON))
     name: Optional[str] = None
     description: Optional[str] = None
     result: Dict = Field(default={}, sa_column=Column(JSON))
@@ -88,6 +87,7 @@ class Task(TaskBase, table=True):
     project_id: str = Field(foreign_key="project.id")
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+    logs: List[str] = Field(default=[], sa_column=Column(JSON))
     
     project: Project = Relationship(back_populates="tasks")
 

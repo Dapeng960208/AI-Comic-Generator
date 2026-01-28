@@ -13,6 +13,7 @@ import traceback
 
 import logging
 import sys
+import time
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
@@ -635,11 +636,19 @@ Ensure the character's expression and pose reflect their personality: {personali
 """
             
             log_task_event(session, task_id, f"Calling AI service for character {char.name}...")
-            image_bytes = ai.generate_image(
-                prompt,
-                aspect_ratio=char.project.aspect_ratio or "16:9",
-                resolution=char.project.resolution or "2K"
-            )
+            start_time = time.time()
+            try:
+                image_bytes = ai.generate_image(
+                    prompt,
+                    aspect_ratio=char.project.aspect_ratio or "16:9",
+                    resolution=char.project.resolution or "2K"
+                )
+                elapsed = time.time() - start_time
+                log_task_event(session, task_id, f"AI generation finished in {elapsed:.2f}s. Image size: {len(image_bytes)} bytes.")
+            except Exception as e:
+                elapsed = time.time() - start_time
+                log_task_event(session, task_id, f"AI generation failed after {elapsed:.2f}s: {str(e)}")
+                raise e
             
             relative_url = save_generated_image(session, char.project_id, "character", char.id, image_bytes)
             

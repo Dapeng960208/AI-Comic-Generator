@@ -59,10 +59,10 @@
               </div>
 
               <!-- Prompt (Existing) -->
-              <div class="detail-group mt-3" v-if="item.data.prompt">
+              <div class="detail-group mt-3">
                 <label>Full Prompt:</label>
                 <div class="detail-content prompt-text">
-                  {{ item.data.prompt }}
+                  {{ item.data.prompt || 'No prompt set' }}
                 </div>
               </div>
               
